@@ -1,11 +1,11 @@
 package models.order;
 
-import models.accounts.Vendor;
-import models.storage.Storage;
+import models.BaseModel;
+import models.account.Vendor;
+import models.location.storage.Storage;
 
 
-public class Product {
-    private int id;
+public class Product extends BaseModel {
     private String name;
     private String description;
     int price;
@@ -13,16 +13,11 @@ public class Product {
     Storage storage;
     Vendor vendor;
 
-    public Product(String name, String description, int price, Category category, Storage storage, Vendor vendor) {
-        this(-1,name, description, price, category, storage,vendor);
-    }
+    // ********** Конструкторы *************
 
-    public Product(int id,String name, String description, int price) {
-        this(id,name, description, price,null,null,null);
-    }
-
+    // Конструктор со всеми полями
     public Product(int id,String name, String description, int price, Category category, Storage storage, Vendor vendor) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.description = description;
 
@@ -37,9 +32,14 @@ public class Product {
         this.vendor = vendor;
     }
 
-    public int getId() {
-        return id;
+    public Product(String name, String description, int price, Category category, Storage storage, Vendor vendor) {
+        this(0,name, description, price, category, storage,vendor);
     }
+
+    public Product(int id,String name, String description, int price) {
+        this(id,name, description, price,null,null,null);
+    }
+
 
     public String getName() {
         return name;

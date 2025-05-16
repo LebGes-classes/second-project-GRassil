@@ -2,7 +2,8 @@ package dao.acc;
 
 import dao.DAO;
 import dao.DBConnection;
-import models.accounts.Account;
+import models.account.Account;
+import models.account.EAccType;
 
 import java.io.IOException;
 import java.sql.*;
@@ -15,11 +16,12 @@ public class AccountDAO implements DAO<Account> {
     @Override
     public int save(Account account) {
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username, password, acc_type) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             // Устанавливаем значения параметров
             stmt.setString(1, account.getUsername());
             stmt.setString(2, account.getPassword());
+            stmt.setString(3, account.getEAccType().toString());
 
             stmt.executeUpdate();
 
@@ -99,8 +101,8 @@ public class AccountDAO implements DAO<Account> {
     public List<Account> getAll() {
         List<Account> accounts = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users");
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users");
+                    ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 accounts.add(mapResultSetToAccount(rs)); // Преобразуем ResultSet в Account
@@ -117,7 +119,8 @@ public class AccountDAO implements DAO<Account> {
         int id = rs.getInt("id");
         String username = rs.getString("username");
         String password = rs.getString("password");
+        EAccType eAccType = EAccType.valueOf(rs.getString("acc_type"));
 
-        return new Account(id, username, password);
+        return new Account(id, username, password, eAccType);
     }
 }

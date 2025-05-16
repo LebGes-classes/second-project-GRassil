@@ -3,8 +3,8 @@ package dao.acc;
 import dao.DAO;
 import dao.DBConnection;
 import dao.storage.PostamatDAO;
-import models.accounts.Customer;
-import models.storage.psm.Postamat;
+import models.account.Customer;
+import models.location.storage.psm.Postamat;
 
 import java.io.IOException;
 import java.sql.*;
@@ -29,13 +29,14 @@ public class CustomerDAO implements DAO<Customer> {
             // 1. Сохраняем общие данные аккаунта в таблицу users
             int id = accountDAO.save(customer); // Получаем ID созданного аккаунта
 
-            // 2. Сохраняем специфические данные клиента в таблицу user_customers
+
+            // 2 Сохраняем специфические данные клиента в таблицу user_customers
             stmt.setInt(1, id); // ID клиента
             stmt.setInt(2, customer.getPostamat().getId()); // ID постамата
 
             stmt.executeUpdate();
 
-            return id; // Возвращаем ID созданного клиента
+            return id; // Возвращаем ID созданного клиента, закрываем подключение
 
         } catch (SQLException | IOException e) {
             System.out.println("Error - " + e);
@@ -50,13 +51,15 @@ public class CustomerDAO implements DAO<Customer> {
     @Override
     public boolean update(Customer customer) {
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("UPDATE user_customers SET postamat = ? WHERE id = ?")) {
+                PreparedStatement stmt = conn.prepareStatement("UPDATE user_customers SET postamat = ? WHERE id = ?")) {
+
+            boolean accRowsAffected = accountDAO.update(customer); // Обновляем данные в таблице с аккаунтами. true - данные поменялись, else - данные не поменялись
 
             stmt.setInt(1, customer.getPostamat().getId()); // Новый ID постамата
             stmt.setInt(2, customer.getId()); // ID клиента
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Возвращаем true, если обновление прошло успешно
+            boolean custRowsAffected = stmt.executeUpdate() > 0; // Изменилось ли что-то в пвз
+            return accRowsAffected || custRowsAffected; // Возвращаем true, если обновление прошло успешно
         } catch (SQLException | IOException e) {
             System.out.println("Error - " + e);
             return false;
@@ -79,10 +82,10 @@ public class CustomerDAO implements DAO<Customer> {
     @Override
     public Customer getById(int id) {
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT u.id, u.username, u.password, uc.postamat " +
-                     "FROM users u " +
-                     "JOIN user_customers uc ON uc.id = u.id " +
-                     "WHERE u.id = ?")) {
+                PreparedStatement stmt = conn.prepareStatement("SELECT u.id, u.username, u.password, uc.postamat " +
+                                                                "FROM users u " +
+                                                                "JOIN user_customers uc ON uc.id = u.id " +
+                                                                "WHERE u.id = ?")) {
 
             stmt.setInt(1, id);
 
@@ -108,11 +111,10 @@ public class CustomerDAO implements DAO<Customer> {
     public List<Customer> getAll() {
         List<Customer> customers = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT u.id, u.username, u.password, uc.postamat " +
-                     "FROM users u " +
-                     "JOIN user_customers uc ON uc.id = u.id");
-             ResultSet rs = stmt.executeQuery()) {
-
+                PreparedStatement stmt = conn.prepareStatement("SELECT u.id, u.username, u.password, uc.postamat " +
+                                                                "FROM users u " +
+                                                                "JOIN user_customers uc ON uc.id = u.id");
+                    ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 customers.add(mapResultSetToCustomer(rs)); // Преобразуем ResultSet в объект Customer
             }

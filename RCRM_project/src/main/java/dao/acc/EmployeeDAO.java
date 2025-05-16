@@ -3,9 +3,9 @@ package dao.acc;
 import dao.DAO;
 import dao.DBConnection;
 import dao.storage.WarehouseDAO;
-import models.accounts.Employee;
-import models.accounts.POSITION;
-import models.storage.wrh.Warehouse;
+import models.account.Employee;
+import models.account.EPosition;
+import models.location.storage.wrh.Warehouse;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -111,8 +111,8 @@ public class EmployeeDAO implements DAO<Employee> {
         String username = rs.getString("username");
         String password = rs.getString("password");
         Warehouse wrh = warehouseDAO.getById(rs.getInt("warehouse"));
-        POSITION position = POSITION.valueOf(rs.getString("position"));
+        EPosition EPosition = EPosition.valueOf(rs.getString("EPosition"));
 
-        return new Employee(id, username, password, wrh, position);
+        return new Employee(id, username, password, wrh, EPosition);
     }
 }

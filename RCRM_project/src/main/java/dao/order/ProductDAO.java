@@ -4,10 +4,10 @@ import dao.DAO;
 import dao.DBConnection;
 import dao.acc.VendorDAO;
 import dao.storage.StorageDAO;
-import models.accounts.Vendor;
+import models.account.Vendor;
 import models.order.Category;
 import models.order.Product;
-import models.storage.Storage;
+import models.location.storage.Storage;
 
 import java.io.IOException;
 import java.sql.Connection;

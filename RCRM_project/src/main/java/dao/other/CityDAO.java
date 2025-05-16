@@ -1,19 +1,18 @@
-package dao.storage;
+package dao.other;
 
 import dao.DAO;
-import models.location.storage.psm.Postamat;
+import models.location.City;
 
 import java.util.List;
 
-public class PostamatDAO implements DAO<Postamat> {
-
+public class CityDAO implements DAO<City> {
     @Override
-    public int save(Postamat obj) {
+    public int save(City obj) {
         return 0;
     }
 
     @Override
-    public boolean update(Postamat obj) {
+    public boolean update(City obj) {
         return false;
     }
 
@@ -23,12 +22,12 @@ public class PostamatDAO implements DAO<Postamat> {
     }
 
     @Override
-    public Postamat getById(int id) {
+    public City getById(int id) {
         return null;
     }
 
     @Override
-    public List<Postamat> getAll() {
+    public List<City> getAll() {
         return List.of();
     }
 }

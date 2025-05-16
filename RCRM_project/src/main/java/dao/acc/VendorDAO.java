@@ -2,10 +2,7 @@ package dao.acc;
 
 import dao.DAO;
 import dao.DBConnection;
-import dao.storage.PostamatDAO;
-import models.accounts.POSITION;
-import models.accounts.Vendor;
-import models.storage.psm.Postamat;
+import models.account.Vendor;
 
 import java.io.IOException;
 import java.sql.*;
